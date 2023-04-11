@@ -1,0 +1,41 @@
+from datetime import datetime
+from typing import Annotated
+
+from fastapi import Body, FastAPI, status
+from fastapi.responses import JSONResponse
+from fastapi.encoders import jsonable_encoder
+from pydantic import BaseModel
+
+class Item(BaseModel):
+    title: str
+    timestamp: datetime
+    description: str | None = None
+
+app = FastAPI()
+
+
+
+items = {"foo": {"name": "Fighters", "size": 6}, "bar": {"name": "Tenders", "size": 3}}
+
+"""
+@app.put("/items/{item_id}")
+async def upsert_item(
+    item_id: str,
+    name: Annotated[str | None, Body()] = None,
+    size: Annotated[str | None, Body()] = None,
+):
+    if item_id in items:
+        item = item[item_id]
+        item["name"] = name
+        item["size"] = size
+        return item
+    else:
+        item = {"name": name, "size": size}
+        items[item_id] = item
+        return JSONResponse(status_code=status.HTTP_201_CREATED, content=item)
+"""
+
+@app.put("/items{item_id}")
+def update_item(id: str, item: Item):
+    json_comptabile_item_data = jsonable_encoder(item)
+    return JSONResponse(content=json_comptabile_item_data)
